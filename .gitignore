@@ -1,0 +1,31 @@
+*.log
+*.pot
+*.pyc
+local_settings.py
+_local_settings.py
+.DS_Store
+Icon?
+.sass-cache
+*.pid
+*.db
+.idea
+*.sql.gz
+*~
+nohup.out
+csv/
+*.csv
+# Thumbnails
+._*
+.noseids
+*.rdb
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+static/compressed
+static/CACHE
+
+my
+
+*.sublime-*
+
