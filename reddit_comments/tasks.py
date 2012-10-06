@@ -3,8 +3,8 @@ import praw
 from celery.task import task, periodic_task
 from celery.schedules import crontab
 
-from reddit_comments.models import Submission, Comment, TrollClassifierWeights,
-from reddit_comments.troll_classifier import classify_comment_content_for_troll
+from reddit_comments.models import troll_model, feature_words, save_submission_and_comment
+from reddit_comments import troll_classifier
 
 import settings
 
@@ -16,55 +16,34 @@ reddit.login(username=settings.REDDIT_USERNAME,
              password=settings.REDDIT_PASSWORD)
 search_subreddits = (
     'politics',
-    'funny',
-    'gaming',
-    'atheism',
-    'trees',
-    'starcraft',
-    'anime'
+    # 'funny',
+    # 'gaming',
+    # 'atheism',
+    # 'trees',
+    # 'starcraft',
+    # 'anime'
 )
 
-
-@periodic_task(run_every=crontab(minute="*/15"))
+@periodic_task(run_every=crontab(minute="*/2"))
 def search_subreddits_for_trolls():
     """
     Crawl the subreddits for trolls
     """
-    for subreddit in subreddits:
-        search_subreddit_for_trolls.delay(subreddit)
+    logger.info("Starting reddit troll search")
+    for subreddit in search_subreddits:
+        submissions = reddit.get_subreddit(subreddit).get_hot(limit=15)
+        logger.info("Searching submissions in '%s'" % subreddit)
+        for submission in submissions:
+            logger.info("Searching comments in '%s'" % submission.title)
+            comments = submission.comments_flat
+            for comment in comments:
+                if hasattr(comment, 'body') and troll_classifier.it_is_a_troll(
+                    troll_model, feature_words, comment.body):
+                    logger.info("Troll detected! Saving %s to db." % comment.id)
+                    new_sub, new_com = save_submission_and_comment(submission, comment)
+                    if new_sub:
+                        logger.info("New submission '%s' saved" % submission.title)
+                    if new_com:
+                        logger.info("New troll comment '%s' saved" % comment.id)
 
-
-@task
-def search_subreddit_for_trolls(subreddit, post_limit=15):
-    """
-    Given a sub reddit, will go through all the <post_limit> posts searching
-    for troll comments
-    """
-    submissions = reddit.get_subreddit(subreddit).get_hot(limit=post_limit)
-    for submission in submissions:
-        search_post_for_trolls.delay(submission)
-
-
-@task
-def search_post_for_trolls(post):
-    """
-    Given a post will search through all the comments for troll posts. If a
-    troll post is found, it will save the post to mongo so that a reply can be
-    made later
-    """
-    for comment in post.all_comments:
-        is_troll_post = classify_comment_content_for_troll(comment.body)
-        if is_troll_post:
-            logger.info("Saved troll comment %s to db" % comment.id)
-            submission = Submission(id=comment.submission.id,
-                                    title=comment.submission.title,
-                                    permalink=comment.submission.permalink,
-                                    url=comment.submission.url)
-            submission.save()
-            Comment(id=comment.id,
-                    author_id=comment.author.id,
-                    author_name=comment.author.name,
-                    body=comment.body,
-                    body_html=comment.body_html,
-                    permalink=comment.permalink,
-                    submission=submission).save()
+    logger.info("Troll search completed")

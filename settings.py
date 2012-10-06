@@ -119,12 +119,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'celerytest.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    PROJECT_ROOT + '/templates'
 )
 
 INSTALLED_APPS = (
@@ -137,7 +138,7 @@ INSTALLED_APPS = (
     'south',
     'djsupervisor',
     'djcelery',
-    'testing'
+    'reddit_comments',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -181,6 +182,9 @@ else:
     BROKER_PASSWORD = "tester"
     BROKER_VHOST = "test_vhost"
 
+BROKER_HOST = "redis"
+BROKER_URL = "redis://localhost:6379/0"
+
 # If this is set, periodic tasks are automatically pulled from tasks.py
 # and stored in the database.  I don't know why it allows admins to delete them, though
 # If this is not present, the CELERYBEAT_SCHEDULE variable appars to be used
@@ -222,3 +226,7 @@ REDDIT_USER_AGENT = 'troll_fighter'
 REDDIT_USERNAME = 'i_see_u_trolling'
 REDDIT_PASSWORD = 'OMGWTFYUTROLLINGL0L'
 
+# Troll classifier files
+TROLL_TRAIN = PROJECT_ROOT + '/insult_datasets/train.csv'
+TROLL_TEST = PROJECT_ROOT + '/insult_datasets/test.csv'
+TROLL_WORDS = PROJECT_ROOT + '/reddit_comments/feature_words.txt'

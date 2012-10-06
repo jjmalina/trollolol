@@ -9,12 +9,12 @@ anyjson==0.3.3
 argh==0.15.0
 argparse==1.2.1
 billiard==2.7.3.17
-celery==3.0.11
+celery==2.5.5
 chardet==1.0.1
-django-celery==3.0.10
+django-celery==2.5.5
 django-picklefield==0.2.0
 django-supervisor==0.2.7
-kombu==2.4.7
+kombu==2.2.0
 meld3==0.6.9
 mogo==0.2.1
 numpy==1.7.0rc1.dev-ea23de8
