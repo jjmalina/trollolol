@@ -1,7 +1,7 @@
 Hunting reddit trolls
 ===============================================================
 
-Unfinished hackNY hackathon project. Crawls reddit for new comments and uses the sci-kit SVM package learn detect troll comments.gs
+Unfinished hackNY hackathon project. Crawls reddit for new comments and uses the sci-kit SVM package learn detect troll comments.
 
 # Running it
 
