@@ -1,6 +1,38 @@
 {% extends 'base.html' %}
+{% load markup %}
 
 {% block content %}
-<p>{{ comment.submission.title }}</p>
-<p>{{ comment.body }}</p>
+<div id="troll-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Write them a really hateful, and derogatory response.</h3>
+  </div>
+  <div class="modal-body">
+    <textarea id="troll-response-content">Reading your comment just lowered my IQ...</textarea>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Close</a>
+    <a id="send-troll-response" href="#" class="btn btn-primary">Send your response <i class="icon-arrow-right"></i></a>
+  </div>
+</div>
+<ul>
+    {% for submission in submissions %}
+    <li class="submission well">
+        <h4><a href="{{ submission.submission.permalink }}">{{ submission.submission.title }}</a></h4>
+        <p class="lead">We got {{ submission.submission.troll_count }} possible trolls in this sucker.</p>
+        <ul>
+            {% for comment in submission.comments %}
+            <li class="troll-instance alert alert-warning" data-object-id="{{ comment.object_id }}">
+                <p><span class="lead"><a href="{{ comment.permalink }}" target="_blank">{{ comment.author_name }}</a> said...</span> {{ comment.body|markdown:"safe" }}</p>
+                <ul class="troll-options">
+                    <li><a class="classify btn btn-success" href="#" data-object-id="{{ comment.object_id }}" data-troll="true">Yes, this is a troll <i class="icon-thumbs-up"></i></a></li>
+                    <li><a class="classify btn btn-danger" href="#" data-object-id="{{ comment.object_id }}" data-troll="false">No, this is not a troll <i class="icon-thumbs-down"></i></a></li>
+                    <li><a class="troll-them btn btn-primary" data-toggle="modal" data-object-id="{{ comment.object_id }}">Troll, this sucker <i class="icon-hand-right"></i></a></li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

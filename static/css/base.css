@@ -1,0 +1,12 @@
+#troll-feed {
+  margin-top: 50px; }
+  #troll-feed ul li {
+    list-style-type: none; }
+  #troll-feed .submission .troll-options {
+    margin: 0; }
+    #troll-feed .submission .troll-options li {
+      display: inline; }
+
+#troll-modal textarea {
+  height: 120px;
+  width: 95%; }

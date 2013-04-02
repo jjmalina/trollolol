@@ -1,19 +1,13 @@
 TODO
 
-Train our * algorithm on our insulting training sets, and then test.
-Save our weight vector to the database.
+**DONE** Train our * algorithm on our insulting training sets, and then test.
 
-Write a crawler for reddit
-    goes to reddit subreddits (specified in settings)
-    for each top 40 posts
-        scrape post page and turn comments into data
-        for each comment
-            determine whether comment is insulting/troll
-            if it is, then save all teh comment data necessary for making a response
+set up twitter bootstrap
+add "is troll" and "is not troll" options to each item. writes example to the file
+add response option where we type our own, or use markov chained text
 
-
-figure out
-    saving data to mongo
+Figue out
+    Save our weight vector to the database.
     making responses through reddits api
     markov chaining responses
 

@@ -17,9 +17,21 @@ class Submission(Model):
     url = Field(unicode, required=True)
     date_added = Field(int, required=True)
 
+    @property
+    def comments(self):
+        return Comment.search(submission=self, is_classified=False)
+
+    @property
+    def troll_count(self):
+        total_comments = Comment.search(submission=self).count()
+        not_trolls = Comment.search(submission=self, is_classified=True, is_troll=False).count()
+        return total_comments - not_trolls
+
 
 class Comment(Model):
     replied_to = Field(bool, default=False)
+    is_troll = Field(bool, default=False)
+    is_classified = Field(bool, default=False)
     object_id = Field(unicode, required=True)
     author_id = Field(unicode, required=True)
     author_name = Field(unicode, required=True)
@@ -39,7 +51,7 @@ def save_submission_and_comment(r_submission, r_comment):
         permalink=r_submission.permalink,
         url=r_submission.url,
         date_added=int(time.time())
-    ) if submission is None else submission
+    ) if new_sub else submission
     submission.save()
 
     comment = Comment.find_one({'object_id': r_comment.id})
@@ -53,7 +65,7 @@ def save_submission_and_comment(r_submission, r_comment):
         permalink=r_comment.permalink,
         submission=submission,
         date_added=int(time.time())
-    ).save() if comment is None else comment
+    ).save() if new_com else comment
     return new_sub, new_com
 
 # we train the classifier on server start

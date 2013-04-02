@@ -30,3 +30,5 @@ six==1.2.0
 supervisor==3.0a12
 watchdog==0.5.4
 wsgiref==0.1.2
+markdown==2.2.0
+simplejson==2.6.2
